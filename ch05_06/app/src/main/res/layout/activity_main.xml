@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/LayoutFrame"
+    android:orientation="vertical"
+    android:gravity="center|top">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CHANGE IMAGE"
+        android:id="@+id/Button1" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/dream01"
+            android:id="@+id/Image1"
+            android:scaleType="fitXY"
+            android:visibility="visible"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/dream02"
+            android:id="@+id/Image2"
+            android:scaleType="fitXY"
+            android:visibility="invisible"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/dream03"
+            android:id="@+id/Image3"
+            android:scaleType="fitXY"
+            android:visibility="invisible"/>
+
+    </FrameLayout>
+
+
+
+
+</LinearLayout>
