@@ -53,7 +53,7 @@
             app:trackColorInactive="#6A7281"
             android:layout_margin="10dp"/>
         <TextView
-            android:layout_marginBottom="10dp"
+            android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -61,12 +61,13 @@
             android:textSize="15dp"
             android:textColor="#FBFBFB"/>
         <TextView
+            android:layout_marginTop="5dp"
             android:id="@+id/korTimeText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="12 시 43 분"
-            android:textSize="20dp"
+            android:textSize="25dp"
             android:textColor="#FBFBFB"/>
 
     </LinearLayout>
