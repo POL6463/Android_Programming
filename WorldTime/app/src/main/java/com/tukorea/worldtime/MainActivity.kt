@@ -1,17 +1,17 @@
 package com.tukorea.worldtime
 
 import android.content.SharedPreferences
+import android.content.res.Resources
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.LocaleList
 import android.preference.Preference
 import android.preference.PreferenceManager
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.RequiresApi
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.slider.Slider
 import org.joda.time.DateTimeUtils
 import org.joda.time.DateTimeZone
@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var timeSlider : Slider
     lateinit var korTimeText : TextView
     lateinit var testText : TextView
+    lateinit var setLocationBtn : Button
+    lateinit var zoneList : ListView
     private lateinit var sharedPreferences : SharedPreferences
     private lateinit var editor : SharedPreferences.Editor
 
@@ -39,9 +41,15 @@ class MainActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE)
         editor = sharedPreferences.edit()
 
+        val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet_layout, null)
+        val bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetDialog.setContentView(bottomSheetView)
+//        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetView.findViewById<LinearLayout>(R.id.bottomSheetDashBoardLayout))
+//        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
+        setLocationBtn = findViewById<Button>(R.id.setLocationBtn)
 
-
+        zoneList = bottomSheetView.findViewById<ListView>(R.id.zoneList)
         timeList = findViewById<ListView>(R.id.timeList)
         timeSlider = findViewById<Slider>(R.id.timeSlider)
         korTimeText = findViewById<TextView>(R.id.korTimeText)
@@ -125,7 +133,11 @@ class MainActivity : AppCompatActivity() {
 
         var adapter : ArrayAdapter<String> = ArrayAdapter(this,
             android.R.layout.simple_list_item_1, zoneDisplayList1)
-        timeList.adapter = adapter
+        zoneList.adapter = adapter
+
+        setLocationBtn.setOnClickListener {
+            bottomSheetDialog.show()
+        }
 
 
     }
