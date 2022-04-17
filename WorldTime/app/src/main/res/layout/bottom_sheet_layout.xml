@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:behavior_hideable="true"
-    app:behavior_draggable="true"
+    app:behavior_draggable="false"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     android:background="#2B2B2B"
     android:orientation="vertical"
@@ -15,10 +15,11 @@
         android:layout_width="match_parent"
         android:layout_height="800dp"
         android:orientation="vertical">
-        <SearchView
+        <androidx.appcompat.widget.SearchView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
+            app:queryHint="시간대 검색"
             />
 
         <LinearLayout

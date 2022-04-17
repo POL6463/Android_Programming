@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.slider.Slider
+import kotlinx.android.synthetic.main.bottom_sheet_layout.*
 import org.joda.time.DateTimeUtils
 import org.joda.time.DateTimeZone
 import org.w3c.dom.Text
@@ -32,20 +33,29 @@ class MainActivity : AppCompatActivity() {
     lateinit var setLocationBtn : Button
     lateinit var zoneList : ListView
     private lateinit var sharedPreferences : SharedPreferences
+    private lateinit var sharedPreferencesSelected : SharedPreferences
     private lateinit var editor : SharedPreferences.Editor
+    private lateinit var editorSelected : SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         supportActionBar?.hide()
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE)
-        editor = sharedPreferences.edit()
+        editor = sharedPreferences.edit() //시간대 저장할 저장소
+
+        sharedPreferencesSelected = getSharedPreferences("selected", MODE_PRIVATE)
+        editorSelected = sharedPreferencesSelected.edit()
+
 
         val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet_layout, null)
         val bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        bottomSheetDialog.behavior.isFitToContents = false
+        bottomSheetDialog.behavior.expandedOffset = 300
+        bottomSheetDialog.behavior.isDraggable = false
         bottomSheetDialog.setContentView(bottomSheetView)
-//        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetView.findViewById<LinearLayout>(R.id.bottomSheetDashBoardLayout))
-//        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
 
         setLocationBtn = findViewById<Button>(R.id.setLocationBtn)
 
@@ -61,6 +71,7 @@ class MainActivity : AppCompatActivity() {
         var timeMin : Int
         var timeMinStr : String
         var timeForm : String
+
 
         var locales : Array<out String> = Locale.getISOCountries()
         for (item in locales) {
@@ -129,7 +140,6 @@ class MainActivity : AppCompatActivity() {
             korTimeText.setText("${timeHourStr} 시 ${timeMinStr} 분 ")
         }
 
-        var mid = arrayOf("1번", "2번", "3반", "4번", "5번")
 
         var adapter : ArrayAdapter<String> = ArrayAdapter(this,
             android.R.layout.simple_list_item_1, zoneDisplayList1)
@@ -138,6 +148,41 @@ class MainActivity : AppCompatActivity() {
         setLocationBtn.setOnClickListener {
             bottomSheetDialog.show()
         }
+
+        var selectedTZ : ArrayList<String> = arrayListOf()
+
+
+        sharedPreferencesSelected.all.values.map { item ->
+            selectedTZ.add(item.toString())
+        }
+
+
+        var adapter2 : ArrayAdapter<String> = ArrayAdapter(this,
+            android.R.layout.simple_list_item_1, selectedTZ)
+        timeList.adapter = adapter2
+
+        zoneList.setOnItemClickListener { parent, view, position, id ->
+            if (sharedPreferencesSelected.contains(position.toString())){
+                Toast.makeText(applicationContext, "이미 등록되어있습니다.", Toast.LENGTH_SHORT).show()
+                bottomSheetDialog.dismiss()
+                return@setOnItemClickListener
+            }
+            selectedTZ.add(adapter.getItem(position).toString())
+            editorSelected.putString(position.toString(), adapter.getItem(position).toString())
+            editorSelected.commit()
+            testText.text = adapter.getItem(position).toString()
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetDialog.setOnDismissListener {
+            adapter2 = ArrayAdapter(this,
+                android.R.layout.simple_list_item_1, selectedTZ)
+            timeList.adapter = adapter2
+        }
+
+
+
+
 
 
     }
