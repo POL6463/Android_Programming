@@ -7,6 +7,10 @@ plugins {
 android {
     compileSdk 32
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId "com.tukorea.worldtime"
         minSdk 21

@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.slider.Slider
+import com.tukorea.worldtime.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.bottom_sheet_layout.*
 import org.joda.time.DateTimeUtils
 import org.joda.time.DateTimeZone
@@ -26,6 +27,7 @@ import java.util.stream.Stream
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
     lateinit var timeList : ListView
     lateinit var timeSlider : Slider
     lateinit var korTimeText : TextView
@@ -44,6 +46,8 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE)
         editor = sharedPreferences.edit() //시간대 저장할 저장소
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         sharedPreferencesSelected = getSharedPreferences("selected", MODE_PRIVATE)
         editorSelected = sharedPreferencesSelected.edit()

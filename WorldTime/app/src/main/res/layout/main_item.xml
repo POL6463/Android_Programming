@@ -1,6 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="#505050">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        >
+
+        <TextView
+            android:id="@+id/diffTime"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textColor="#FBFBFB"
+            android:text="차이나는 시간대"
+            android:gravity="center|bottom"
+            android:paddingBottom="5dp"
+            android:textSize="8dp"
+            android:background="#505050"/>
+        <TextView
+            android:id="@+id/zoneName"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:background="#505050"
+            android:text="시간대 이름"
+            android:paddingTop="0dp"
+            android:gravity="center|top"
+            android:textColor="#FBFBFB"
+            />
+
+    </LinearLayout>
+    <TextView
+        android:id="@+id/itemTime"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:layout_weight="1"
+        android:text="12:23"
+        android:gravity="center"
+        android:textColor="#FBFBFB"
+        android:textSize="20dp"/>
+
+
+</LinearLayout>
