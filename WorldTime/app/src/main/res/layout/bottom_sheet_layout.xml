@@ -15,7 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="800dp"
         android:orientation="vertical">
-        <androidx.appcompat.widget.SearchView
+        <SearchView
+            android:id="@+id/searchBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
@@ -32,7 +33,9 @@
             <ListView
                 android:id="@+id/zoneList"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:divider="#B1BCBE"
+                android:dividerHeight="1.5dp">
             </ListView>
         </LinearLayout>
     </LinearLayout>

@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sharedPreferencesSelected : SharedPreferences
     private lateinit var editor : SharedPreferences.Editor
     private lateinit var editorSelected : SharedPreferences.Editor
+    lateinit var searchBox : SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 
 
         setLocationBtn = findViewById<Button>(R.id.setLocationBtn)
-
+        searchBox = bottomSheetView.findViewById<SearchView>(R.id.searchBox)
         zoneList = bottomSheetView.findViewById<ListView>(R.id.zoneList)
         timeList = findViewById<ListView>(R.id.timeList)
         timeSlider = findViewById<Slider>(R.id.timeSlider)
@@ -70,7 +71,6 @@ class MainActivity : AppCompatActivity() {
         var timeHourStr : String
         var timeMin : Int
         var timeMinStr : String
-        var timeForm : String
 
 
         var locales : Array<out String> = Locale.getISOCountries()
@@ -142,17 +142,14 @@ class MainActivity : AppCompatActivity() {
 
 
         var adapter : ArrayAdapter<String> = ArrayAdapter(this,
-            android.R.layout.simple_list_item_1, zoneDisplayList1)
+            R.layout.item_list, zoneDisplayList1)
         zoneList.adapter = adapter
 
-        setLocationBtn.setOnClickListener {
-            bottomSheetDialog.show()
-        }
 
         var selectedTZ : ArrayList<String> = arrayListOf()
 
 
-        sharedPreferencesSelected.all.values.map { item ->
+        sharedPreferencesSelected.all.keys.map { item ->
             selectedTZ.add(item.toString())
         }
 
@@ -161,14 +158,15 @@ class MainActivity : AppCompatActivity() {
             android.R.layout.simple_list_item_1, selectedTZ)
         timeList.adapter = adapter2
 
+
         zoneList.setOnItemClickListener { parent, view, position, id ->
-            if (sharedPreferencesSelected.contains(position.toString())){
+            if (sharedPreferencesSelected.contains(adapter.getItem(position).toString())){
                 Toast.makeText(applicationContext, "이미 등록되어있습니다.", Toast.LENGTH_SHORT).show()
                 bottomSheetDialog.dismiss()
                 return@setOnItemClickListener
             }
             selectedTZ.add(adapter.getItem(position).toString())
-            editorSelected.putString(position.toString(), adapter.getItem(position).toString())
+            editorSelected.putString(adapter.getItem(position).toString(), "선택")
             editorSelected.commit()
             testText.text = adapter.getItem(position).toString()
             bottomSheetDialog.dismiss()
@@ -178,6 +176,29 @@ class MainActivity : AppCompatActivity() {
             adapter2 = ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, selectedTZ)
             timeList.adapter = adapter2
+        }
+
+        searchBox.setOnQueryTextListener(object :
+        SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                adapter.filter.filter(query)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.filter.filter(newText)
+                return false
+
+
+            }
+        })
+
+        setLocationBtn.setOnClickListener {
+            if (adapter2.count >= 3){
+                Toast.makeText(applicationContext, "최대 3개까지 등록 가능합니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            bottomSheetDialog.show()
         }
 
 
