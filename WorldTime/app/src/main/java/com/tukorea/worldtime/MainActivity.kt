@@ -22,6 +22,7 @@ import java.sql.Time
 import java.time.ZoneId
 import java.time.format.TextStyle
 import java.util.*
+import java.util.concurrent.TimeUnit
 import java.util.prefs.Preferences
 import java.util.stream.Stream
 import kotlin.collections.ArrayList
@@ -100,6 +101,7 @@ class MainActivity : AppCompatActivity() {
 
         var currTime = Calendar.getInstance().time
         //현재시간 받아오기
+        var krOffSet = TimeUnit.MINUTES.convert(TimeZone.getTimeZone("ROK").rawOffset.toLong(), TimeUnit.MILLISECONDS).toString()
 
         if(currTime.hours < 10){
             timeHourStr = "0${currTime.hours}"
@@ -152,15 +154,46 @@ class MainActivity : AppCompatActivity() {
 
         var selectedTZ : ArrayList<String> = arrayListOf()
 
+        val items = mutableListOf<MainListItem>(
+            MainListItem("-12", "대한민국 표준시", "12 : 23"),
+            MainListItem("-9", "가이아나 시간", "55 : 55")
+        )
+
 
         sharedPreferencesSelected.all.keys.map { item ->
             selectedTZ.add(item.toString())
+            var tempId = sharedPreferences.getString(item, "")
+            var tempOffset = TimeUnit.MINUTES.convert(TimeZone.getTimeZone(tempId).rawOffset.toLong(), TimeUnit.MILLISECONDS).toString()
+            var timeDiff = krOffSet.toInt() - tempOffset.toInt()
+            var timeDiffText = "${-timeDiff/60} 시간 ${timeDiff%60} 분"
+            var itemTime : Int
+            if(timeSlider.value.toInt() < timeDiff){
+                timeDiff -= timeSlider.value.toInt()
+                itemTime =  1440 - timeDiff
+            }
+            else{
+                itemTime = if(timeSlider.value.toInt() - timeDiff > 1440){
+                    timeSlider.value.toInt() - timeDiff - 1440
+                } else {
+                    timeSlider.value.toInt() - timeDiff
+                }
+            }
+            testText.text = (itemTime/60).toString()
+
+
+
+
         }
 
 
-        var adapter2 : ArrayAdapter<String> = ArrayAdapter(this,
-            android.R.layout.simple_list_item_1, selectedTZ)
-        timeList.adapter = adapter2
+
+
+        var adapter2 = MainListAdapter(this, items)
+        binding.timeList.adapter = adapter2
+
+//        var adapter2 : ArrayAdapter<String> = ArrayAdapter(this,
+//            android.R.layout.simple_list_item_1, selectedTZ)
+//        timeList.adapter = adapter2
 
 
         zoneList.setOnItemClickListener { parent, view, position, id ->
@@ -176,11 +209,11 @@ class MainActivity : AppCompatActivity() {
             bottomSheetDialog.dismiss()
         }
 
-        bottomSheetDialog.setOnDismissListener {
-            adapter2 = ArrayAdapter(this,
-                android.R.layout.simple_list_item_1, selectedTZ)
-            timeList.adapter = adapter2
-        }
+//        bottomSheetDialog.setOnDismissListener {
+//            adapter2 = ArrayAdapter(this,
+//                android.R.layout.simple_list_item_1, selectedTZ)
+//            timeList.adapter = adapter2
+//        }
 
         searchBox.setOnQueryTextListener(object :
         SearchView.OnQueryTextListener{

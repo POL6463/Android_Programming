@@ -3,7 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="#505050">
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    >
 
     <LinearLayout
         android:layout_width="0dp"
@@ -30,7 +33,7 @@
             android:layout_weight="2"
             android:background="#505050"
             android:text="시간대 이름"
-            android:paddingTop="0dp"
+            android:paddingTop="5dp"
             android:gravity="center|top"
             android:textColor="#FBFBFB"
             />
@@ -44,7 +47,9 @@
         android:text="12:23"
         android:gravity="center"
         android:textColor="#FBFBFB"
-        android:textSize="20dp"/>
+        android:textSize="20dp"
+        android:background="#505050"
+        />
 
 
 </LinearLayout>
