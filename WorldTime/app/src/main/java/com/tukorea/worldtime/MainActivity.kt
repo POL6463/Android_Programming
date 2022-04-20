@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.LocaleList
 import android.preference.Preference
 import android.preference.PreferenceManager
+import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -32,7 +33,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var timeList : ListView
     lateinit var timeSlider : Slider
     lateinit var korTimeText : TextView
-    lateinit var testText : TextView
     lateinit var setLocationBtn : Button
     lateinit var zoneList : ListView
     private lateinit var sharedPreferences : SharedPreferences
@@ -62,20 +62,20 @@ class MainActivity : AppCompatActivity() {
         bottomSheetDialog.behavior.isDraggable = false
         bottomSheetDialog.setContentView(bottomSheetView)
 
-
         setLocationBtn = findViewById<Button>(R.id.setLocationBtn)
         searchBox = bottomSheetView.findViewById<SearchView>(R.id.searchBox)
         zoneList = bottomSheetView.findViewById<ListView>(R.id.zoneList)
         timeList = findViewById<ListView>(R.id.timeList)
         timeSlider = findViewById<Slider>(R.id.timeSlider)
         korTimeText = findViewById<TextView>(R.id.korTimeText)
-        testText = findViewById<TextView>(R.id.testText)
 
         var timeSelect : Int
         var timeHour : Int
         var timeHourStr : String
         var timeMin : Int
         var timeMinStr : String
+        var itemHourStr : String
+        var itemMinStr : String
 
 
         var locales : Array<out String> = Locale.getISOCountries()
@@ -126,6 +126,153 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
+        var adapter : ArrayAdapter<String> = ArrayAdapter(this,
+            R.layout.item_list, zoneDisplayList1)
+        zoneList.adapter = adapter
+
+
+
+        val items = mutableListOf<MainListItem>(
+        )
+
+        fun adapterUpdate() {
+            items.clear()
+            sharedPreferencesSelected.all.keys.map { item ->
+                var tempId = sharedPreferences.getString(item, "")
+                var tempOffset = TimeUnit.MINUTES.convert(TimeZone.getTimeZone(tempId).rawOffset.toLong(), TimeUnit.MILLISECONDS).toString()
+                var timeDiff = krOffSet.toInt() - tempOffset.toInt()
+                var timeDiffText = "${-timeDiff/60} 시간 ${timeDiff%60} 분" //아이템 시차
+                var itemTime : Int //아이템 시간 정제 전
+                if(timeSlider.value.toInt() < timeDiff){
+                    timeDiff -= timeSlider.value.toInt()
+                    itemTime =  1440 - timeDiff
+                }
+                else{
+                    itemTime = if(timeSlider.value.toInt() - timeDiff > 1440){
+                        timeSlider.value.toInt() - timeDiff - 1440
+                    } else {
+                        timeSlider.value.toInt() - timeDiff
+                    }
+                }
+                var itemHours = itemTime/60
+                var itemMinutes = itemTime%60
+                if(itemHours < 10){
+                    itemHourStr = "0${itemHours}"
+                }
+                else{
+                    itemHourStr = itemHours.toString()
+                }
+                if(itemMinutes < 10){
+                    itemMinStr = "0${itemMinutes}"
+                }
+                else{
+                    itemMinStr = itemMinutes.toString()
+                }
+
+                var itemTimeText = "${itemHourStr} : ${itemMinStr}" //아이템 시간
+
+
+
+                items.add(MainListItem(timeDiffText, item, itemTimeText))
+
+            }
+        }
+
+
+
+        fun oneItemAdd(item: String){
+            var tempId = sharedPreferences.getString(item, "")
+            var tempOffset = TimeUnit.MINUTES.convert(TimeZone.getTimeZone(tempId).rawOffset.toLong(), TimeUnit.MILLISECONDS).toString()
+            var timeDiff = krOffSet.toInt() - tempOffset.toInt()
+            var timeDiffText = "${-timeDiff/60} 시간 ${timeDiff%60} 분" //아이템 시차
+            var itemTime : Int //아이템 시간 정제 전
+            if(timeSlider.value.toInt() < timeDiff){
+                timeDiff -= timeSlider.value.toInt()
+                itemTime =  1440 - timeDiff
+            }
+            else{
+                itemTime = if(timeSlider.value.toInt() - timeDiff > 1440){
+                    timeSlider.value.toInt() - timeDiff - 1440
+                } else {
+                    timeSlider.value.toInt() - timeDiff
+                }
+            }
+            var itemHours = itemTime/60
+            var itemMinutes = itemTime%60
+            if(itemHours < 10){
+                itemHourStr = "0${itemHours}"
+            }
+            else{
+                itemHourStr = itemHours.toString()
+            }
+            if(itemMinutes < 10){
+                itemMinStr = "0${itemMinutes}"
+            }
+            else{
+                itemMinStr = itemMinutes.toString()
+            }
+
+            var itemTimeText = "${itemHourStr} : ${itemMinStr}" //아이템 시간
+
+
+
+            items.add(MainListItem(timeDiffText, item, itemTimeText))
+
+        }
+
+        adapterUpdate()
+
+
+
+
+        var adapter2 = MainListAdapter(this, items)
+        binding.timeList.adapter = adapter2
+
+
+
+
+
+        zoneList.setOnItemClickListener { parent, view, position, id ->
+            if (sharedPreferencesSelected.contains(adapter.getItem(position).toString())){
+                Toast.makeText(applicationContext, "이미 등록되어있습니다.", Toast.LENGTH_SHORT).show()
+                bottomSheetDialog.dismiss()
+                return@setOnItemClickListener
+            }
+            editorSelected.putString(adapter.getItem(position).toString(), "선택")
+            editorSelected.commit()
+            oneItemAdd(adapter.getItem(position).toString())
+            adapter2.notifyDataSetChanged()
+            bottomSheetDialog.dismiss()
+
+        }
+
+
+        searchBox.setOnQueryTextListener(object :
+        SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                adapter.filter.filter(query)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.filter.filter(newText)
+                return false
+
+
+            }
+        })
+
+
+
+        setLocationBtn.setOnClickListener {
+            if (adapter2.count >= 4){
+                Toast.makeText(applicationContext, "최대 4개까지 등록 가능합니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            bottomSheetDialog.show()
+        }
+
         timeSlider.addOnChangeListener { slider, value, fromUser ->
             timeSelect = value.toInt()
             timeHour = timeSelect / 60
@@ -144,99 +291,12 @@ class MainActivity : AppCompatActivity() {
             }
 
             korTimeText.setText("${timeHourStr} 시 ${timeMinStr} 분 ")
-        }
-
-
-        var adapter : ArrayAdapter<String> = ArrayAdapter(this,
-            R.layout.item_list, zoneDisplayList1)
-        zoneList.adapter = adapter
-
-
-        var selectedTZ : ArrayList<String> = arrayListOf()
-
-        val items = mutableListOf<MainListItem>(
-            MainListItem("-12", "대한민국 표준시", "12 : 23"),
-            MainListItem("-9", "가이아나 시간", "55 : 55")
-        )
-
-
-        sharedPreferencesSelected.all.keys.map { item ->
-            selectedTZ.add(item.toString())
-            var tempId = sharedPreferences.getString(item, "")
-            var tempOffset = TimeUnit.MINUTES.convert(TimeZone.getTimeZone(tempId).rawOffset.toLong(), TimeUnit.MILLISECONDS).toString()
-            var timeDiff = krOffSet.toInt() - tempOffset.toInt()
-            var timeDiffText = "${-timeDiff/60} 시간 ${timeDiff%60} 분"
-            var itemTime : Int
-            if(timeSlider.value.toInt() < timeDiff){
-                timeDiff -= timeSlider.value.toInt()
-                itemTime =  1440 - timeDiff
-            }
-            else{
-                itemTime = if(timeSlider.value.toInt() - timeDiff > 1440){
-                    timeSlider.value.toInt() - timeDiff - 1440
-                } else {
-                    timeSlider.value.toInt() - timeDiff
-                }
-            }
-            testText.text = (itemTime/60).toString()
-
-
-
-
+            adapterUpdate()
+            adapter2.notifyDataSetChanged()
         }
 
 
 
-
-        var adapter2 = MainListAdapter(this, items)
-        binding.timeList.adapter = adapter2
-
-//        var adapter2 : ArrayAdapter<String> = ArrayAdapter(this,
-//            android.R.layout.simple_list_item_1, selectedTZ)
-//        timeList.adapter = adapter2
-
-
-        zoneList.setOnItemClickListener { parent, view, position, id ->
-            if (sharedPreferencesSelected.contains(adapter.getItem(position).toString())){
-                Toast.makeText(applicationContext, "이미 등록되어있습니다.", Toast.LENGTH_SHORT).show()
-                bottomSheetDialog.dismiss()
-                return@setOnItemClickListener
-            }
-            selectedTZ.add(adapter.getItem(position).toString())
-            editorSelected.putString(adapter.getItem(position).toString(), "선택")
-            editorSelected.commit()
-            testText.text = adapter.getItem(position).toString()
-            bottomSheetDialog.dismiss()
-        }
-
-//        bottomSheetDialog.setOnDismissListener {
-//            adapter2 = ArrayAdapter(this,
-//                android.R.layout.simple_list_item_1, selectedTZ)
-//            timeList.adapter = adapter2
-//        }
-
-        searchBox.setOnQueryTextListener(object :
-        SearchView.OnQueryTextListener{
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                adapter.filter.filter(query)
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                adapter.filter.filter(newText)
-                return false
-
-
-            }
-        })
-
-        setLocationBtn.setOnClickListener {
-            if (adapter2.count >= 3){
-                Toast.makeText(applicationContext, "최대 3개까지 등록 가능합니다.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            bottomSheetDialog.show()
-        }
 
 
 

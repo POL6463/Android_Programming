@@ -24,14 +24,6 @@
         android:layout_gravity="center"
         android:paddingTop="15dp"
         />
-        <TextView
-            android:id="@+id/testText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="asdfasdf"
-            android:layout_gravity="center"
-            android:textColor="#FBFBFB"
-            />
     </LinearLayout>
 
     <LinearLayout
