@@ -11,32 +11,32 @@
     android:orientation="vertical"
     android:padding="10dp"
     >
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="800dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <SearchView
             android:id="@+id/searchBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            app:queryHint="시간대 검색"
-            />
+            app:queryHint="시간대 검색" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:layout_marginTop="10dp"
-            android:padding="10dp"
-            >
+            android:orientation="vertical"
+            android:padding="10dp">
+
             <ListView
                 android:id="@+id/zoneList"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:divider="#B1BCBE"
-                android:dividerHeight="1.5dp">
-            </ListView>
+                android:dividerHeight="1.5dp"></ListView>
         </LinearLayout>
     </LinearLayout>
 

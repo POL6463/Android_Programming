@@ -9,13 +9,18 @@ import android.os.LocaleList
 import android.preference.Preference
 import android.preference.PreferenceManager
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
+import androidx.core.view.get
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.slider.Slider
 import com.tukorea.worldtime.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.bottom_sheet_layout.*
+import kotlinx.android.synthetic.main.main_item.*
+import kotlinx.android.synthetic.main.main_item.view.*
 import org.joda.time.DateTimeUtils
 import org.joda.time.DateTimeZone
 import org.w3c.dom.Text
@@ -43,6 +48,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
         setContentView(R.layout.activity_main)
         supportActionBar?.hide()
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE)
@@ -91,9 +101,6 @@ class MainActivity : AppCompatActivity() {
             editor.putString( TimeZone.getTimeZone(item).getDisplayName(Locale.KOREA) , item )}//한국어로 타임존 디스플레이 네임 출력
         editor.commit()
         var zoneDisplayList1 = zoneDisplayList.distinct().sorted() //중복제거, 정렬
-
-
-
 
 
 
@@ -227,7 +234,10 @@ class MainActivity : AppCompatActivity() {
 
 
         var adapter2 = MainListAdapter(this, items)
-        binding.timeList.adapter = adapter2
+        timeList.adapter = adapter2
+
+
+
 
 
 
@@ -242,6 +252,7 @@ class MainActivity : AppCompatActivity() {
             editorSelected.putString(adapter.getItem(position).toString(), "선택")
             editorSelected.commit()
             oneItemAdd(adapter.getItem(position).toString())
+            adapterUpdate()
             adapter2.notifyDataSetChanged()
             bottomSheetDialog.dismiss()
 
@@ -265,8 +276,10 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
+
         setLocationBtn.setOnClickListener {
-            if (adapter2.count >= 4){
+            if (adapter2.count >= 8){
                 Toast.makeText(applicationContext, "최대 4개까지 등록 가능합니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -295,10 +308,21 @@ class MainActivity : AppCompatActivity() {
             adapter2.notifyDataSetChanged()
         }
 
-
-
-
-
+        timeList.onItemLongClickListener = AdapterView.OnItemLongClickListener { _, _, index, _ ->
+            var dlg = AlertDialog.Builder(this)
+            var name = timeList[index].zoneName.text
+            dlg.setTitle("삭제하시겠습니까?")
+            dlg.setIcon(R.mipmap.ic_main)
+            dlg.setPositiveButton("확인"){ dialog, which ->
+                editorSelected.remove(name.toString())
+                editorSelected.commit()
+                adapterUpdate()
+                adapter2.notifyDataSetChanged()
+            }
+            dlg.setNegativeButton("취소", null)
+            dlg.show()
+            true
+        }
 
 
 

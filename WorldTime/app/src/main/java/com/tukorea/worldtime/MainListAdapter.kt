@@ -5,13 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Toast
 import com.tukorea.worldtime.databinding.MainItemBinding
 
 class MainListAdapter (private val context: Context, private val MainList: MutableList<MainListItem>) : BaseAdapter() {
     override fun getCount(): Int = MainList.size
 
-
     override fun getItem(position: Int): MainListItem = MainList[position]
+
+
 
 
     override fun getItemId(position: Int): Long = position.toLong()
@@ -23,6 +25,7 @@ class MainListAdapter (private val context: Context, private val MainList: Mutab
         binding.diffTime.text = show.timeDiff
         binding.zoneName.text = show.zoneName
         binding.itemTime.text = show.itemTime
+
 
         return binding.root
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:padding="10dp"
     android:background="#2B2B2B"
     >
 
@@ -18,22 +18,30 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="T I M E"
+        android:text="T I M E E"
         android:textSize="25dp"
         android:textColor="#FBFBFB"
         android:layout_gravity="center"
-        android:paddingTop="15dp"
+        android:paddingTop="10dp"
+
         />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="세계시간 계산기"
+            android:textColor="#BCBCBC"
+            android:paddingTop="5dp"
+            android:layout_gravity="center"/>
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_weight="2"
         android:background="@drawable/layout_bg"
-        android:layout_marginBottom="10dp"
-
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         >
 
         <com.google.android.material.slider.Slider
@@ -51,9 +59,11 @@
             app:labelBehavior="gone"
             app:trackColorActive="#6A7281"
             app:trackColorInactive="#6A7281"
-            android:layout_margin="10dp"/>
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            />
         <TextView
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -61,13 +71,14 @@
             android:textSize="15dp"
             android:textColor="#FBFBFB"/>
         <TextView
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="0dp"
             android:id="@+id/korTimeText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="12 시 43 분"
             android:textSize="25dp"
+            android:paddingBottom="10dp"
             android:textColor="#FBFBFB"/>
 
     </LinearLayout>
@@ -88,7 +99,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="#B1BCBE"
-            android:dividerHeight="1.5dp">
+            android:dividerHeight="1.5dp"
+            >
         </ListView>
 
 
